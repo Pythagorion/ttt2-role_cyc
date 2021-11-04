@@ -66,7 +66,7 @@ if SERVER then
 
 		local weap = attacker:GetActiveWeapon()
 
-		-- if weap:GetClass() == "weapon_zm_improvised" then return end
+		if weap:GetClass() == "weapon_zm_improvised" then return end
 
 		-- when the cyclone is able to flag another person, the message is sent
 		if attacker.cyc_data.sus_shot and attacker:GetSubRole() == ROLE_CYCLONE then
@@ -79,14 +79,17 @@ if SERVER then
 			ply:SetHealth(cv_cyc_cur_health)
 
 			-- only remove, when clip size is above 1 and the cvar boolean is set on 'true'
-			if weap:Clip1() > 1 and cv_cyc_strip_weapons then
+			if weap:Clip1() >= 1 and cv_impoe_strip_weapons then
+				WEPS.DropNotifiedWeapon(attacker, weap, false, false)
 				weap:Remove()
 			end
 
-			attacker.cyc_data.sus_shot = false
-		end
+			timer.Simple(0, function()
+				if not IsValid(attacker) then return end
 
-		print("DEBUG MESSAGE")
+				attacker.impoe_data.sus_shot = false
+			end)
+		end
 	end)
 
 	-- make sure to clear the cyclone's flag
