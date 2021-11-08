@@ -1,2 +1,2 @@
 # ttt2-role_cyc
- Adds the cyclone to TTT2
+ Adds the cyclone and hurricane to TTT2
