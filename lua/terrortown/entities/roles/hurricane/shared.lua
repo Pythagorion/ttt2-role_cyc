@@ -1,29 +1,33 @@
 if SERVER then
     AddCSLuaFile()
 
-    util.AddNetworkString("ttt2_cyclone_role_sus")
-	resource.AddFile("materials/vgui/ttt/dynamic/roles/icon_cyc")
+    util.AddNetworkString("ttt2_hurricane_role_sus")
+	resource.AddFile("materials/vgui/ttt/dynamic/roles/icon_hurr")
 end
 
 function ROLE:PreInitialize()
-    self.color                      = Color(156, 5, 57, 255)
+    self.color                      = Color(42, 45, 107, 255)
 
-	self.abbr                       = "cyc"
+	self.abbr                       = "hurr"
 	self.surviveBonus               = 0
 	self.score.killsMultiplier      = 2
 	self.score.teamKillsMultiplier  = -8
-	self.preventFindCredits         = false
-	self.preventKillCredits         = false
-	self.preventTraitorAloneCredits = false
-	self.preventWin                 = false
+	self.preventFindCredits         = true
+	self.preventKillCredits         = true
+	self.preventTraitorAloneCredits = true
+	self.preventWin                 = true
+	self.unknownTeam                = true
 
-	self.defaultTeam                = TEAM_TRAITOR
+	self.isPublicRole = true
+	self.isPolicingRole = true
+
+	self.defaultTeam                = TEAM_INNOCENT
 
 	self.conVarData = {
 		pct          = 0.15, -- necessary: percentage of getting this role selected (per player)
 		maximum      = 1, -- maximum amount of roles in a round
 		minPlayers   = 7, -- minimum amount of players until this role is able to get selected
-		credits      = 2, -- the starting credits of a specific role
+		credits      = 0, -- the starting credits of a specific role
 		shopFallback = SHOP_FALLBACK_TRAITOR, -- granting the role access to the shop
 		togglable    = true, -- option to toggle a role for a client if possible (F1 menu)
 		random       = 33
@@ -31,20 +35,20 @@ function ROLE:PreInitialize()
 end
 
 function ROLE:Initialize()
-    roles.SetBaseRole(self, ROLE_TRAITOR)
+    roles.SetBaseRole(self, ROLE_DETECTIVE)
 end
 
 if SERVER then
 
 	-- using this function to reset all values for the coming round
-    local function ResetCyclone()
+    local function ResetHurricane()
 		local plys = player.GetAll()
 
 		for i=1, #plys do
 			local ply = plys[i]
 
-			ply.cyc_data = {}
-			ply.cyc_data.sus_shot = true
+			ply.hurr_data = {}
+			ply.hurr_data.sus_shot = true
 
 			if ply.isFlagged then
 				ply:SetMaxHealth(100)
@@ -56,13 +60,13 @@ if SERVER then
 		SetGlobalBool("ply_is_flagged", false)
 	end
 
-	hook.Add("ScalePlayerDamage", "ttt2_role_cyclone_shoots", function(ply, hitgroup, dmginfo)
+	hook.Add("ScalePlayerDamage", "ttt2_role_hurricane_shoots", function(ply, hitgroup, dmginfo)
 
 		-- cache CVARs for further purposes
-		local cv_cyc_strip_weapons = GetConVar("ttt_cyclone_always_strip_weapons"):GetBool()
-		local cv_cyc_epop_bool = GetConVar("ttt_cyclone_print_anounce_popup"):GetBool()
-		local cv_cyc_max_health = GetConVar("ttt_cyclone_set_max_health"):GetInt()
-		local cv_cyc_cur_health = GetConVar("ttt_cyclone_set_cur_health"):GetInt()
+		local cv_hurr_strip_weapons = GetConVar("ttt_hurricane_always_strip_weapons"):GetBool()
+		local cv_hurr_epop_bool = GetConVar("ttt_hurricane_print_anounce_popup"):GetBool()
+		local cv_hurr_max_health = GetConVar("ttt_hurricane_set_max_health"):GetInt()
+		local cv_hurr_cur_health = GetConVar("ttt_hurricane_set_cur_health"):GetInt()
 
 		-- get attacker and exclude specific cases
 		local attacker = dmginfo:GetAttacker()
@@ -75,8 +79,8 @@ if SERVER then
 
 		if weap:GetClass() == "weapon_zm_improvised" then return end
 
-		-- when the cyclone is able to flag another person, the message is sent
-		if attacker.cyc_data.sus_shot and attacker:GetSubRole() == ROLE_CYCLONE then
+		-- when the hurricane is able to flag another person, the message is sent
+		if attacker.hurr_data.sus_shot and attacker:GetSubRole() == ROLE_HURRICANE then
 
 			-- iterate through all players to reset Health of previously marked plys
 			local plys = player.GetAll()
@@ -99,19 +103,19 @@ if SERVER then
 			SetGlobalBool("ply_is_flagged", true)
 
 			-- tell the players then through EPOP
-			if cv_cyc_epop_bool then
-				net.Start("ttt2_cyclone_role_sus")
+			if cv_hurr_epop_bool then
+				net.Start("ttt2_hurricane_role_sus")
 				net.WriteEntity(ply)
 				net.Broadcast()
 			end
 
 			-- tell the HUD to display marked player
-			ply:SetMaxHealth(cv_cyc_max_health)
-			ply:SetHealth(cv_cyc_cur_health)
+			ply:SetMaxHealth(cv_hurr_max_health)
+			ply:SetHealth(cv_hurr_cur_health)
 			ply.isFlagged = true
 
 			-- only remove, when clip size is above 1 and the cvar boolean is set on 'true'
-			if weap:Clip1() >= 1 and cv_cyc_strip_weapons then
+			if weap:Clip1() >= 1 and cv_hurr_strip_weapons then
 				WEPS.DropNotifiedWeapon(attacker, weap, false, false)
 				weap:Remove()
 			end
@@ -119,26 +123,26 @@ if SERVER then
 			timer.Simple(0, function()
 				if not IsValid(attacker) then return end
 
-				attacker.cyc_data.sus_shot = false
+				attacker.hurr_data.sus_shot = false
 			end)
 		end
 	end)
 
-	-- make sure to clear the cyclone's flag
-	hook.Add("TTTEndRound", "ttt2_role_cyclone_roundend", function()
-		ResetCyclone()
+	-- make sure to clear the hurricane's flag
+	hook.Add("TTTEndRound", "ttt2_role_hurricane_roundend", function()
+		ResetHurricane()
 	end)
 
-	hook.Add("TTTBeginRound", "ttt2_role_cyclone_roundbegin", function()
-		ResetCyclone()
+	hook.Add("TTTBeginRound", "ttt2_role_hurricane_roundbegin", function()
+		ResetHurricane()
 	end)
 
-	hook.Add("TTTPrepareRound", "ttt2_role_cyclone_roundprep", function()
-		ResetCyclone()
+	hook.Add("TTTPrepareRound", "ttt2_role_hurricane_roundprep", function()
+		ResetHurricane()
 	end)
 
 else -- CLIENT
-	net.Receive("ttt2_cyclone_role_sus", function()
+	net.Receive("ttt2_hurricane_role_sus", function()
 		local victim = net.ReadEntity()
 		EPOP:AddMessage({text = LANG.GetParamTranslation("ttt2_cyclone_role_sus", {victim = LANG.TryTranslation(victim:Nick())}), color = Color(50, 168, 82, 255)}, "", 10)
 	end)
@@ -147,42 +151,42 @@ else -- CLIENT
 		local form = vgui.CreateTTT2Form(parent, "header_roles_additional")
 
 		form:MakeHelp({
-			label = "label_cyclone_strip_intel"
+			label = "label_hurricane_strip_intel"
 		})
 
 		form:MakeCheckBox({
-			serverConvar = "ttt_cyclone_always_strip_weapons",
-			label = "label_cyclone_always_strip_weapons"
+			serverConvar = "ttt_hurricane_always_strip_weapons",
+			label = "label_hurricane_always_strip_weapons"
 		})
 
 		form:MakeHelp({
-			label = "label_cyclone_epop_intel"
+			label = "label_hurricane_epop_intel"
 		})
 
 		form:MakeCheckBox({
-			serverConvar = "ttt_cyclone_print_anounce_popup",
-			label = "label_cyclone_epop_bool"
+			serverConvar = "ttt_hurricane_print_anounce_popup",
+			label = "label_hurricane_epop_bool"
 		})
 
 		form:MakeHelp({
-			label = "label_cyclone_max_hp_intel"
+			label = "label_hurricane_max_hp_intel"
 		})
 
 		form:MakeSlider({
-			serverConvar = "ttt_cyclone_set_max_health",
-			label = "label_cyclone_max_hp",
+			serverConvar = "ttt_hurricane_set_max_health",
+			label = "label_hurricane_max_hp",
 			min = 1,
 			max = 500,
 			decimal = 0
 		})
 
 		form:MakeHelp({
-			label = "label_cyclone_cur_hp_intel"
+			label = "label_hurricane_cur_hp_intel"
 		})
 
 		form:MakeSlider({
-			serverConvar = "ttt_cyclone_set_cur_health",
-			label = "label_cyclone_cur_hp",
+			serverConvar = "ttt_hurricane_set_cur_health",
+			label = "label_hurricane_cur_hp",
 			min = 1,
 			max = 500,
 			decimal = 0

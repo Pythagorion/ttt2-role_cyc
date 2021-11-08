@@ -11,6 +11,7 @@ L["ttt2_desc_" .. CYCLONE.name] = [[The Cyclone needs to win with the traitors!]
 
 -- OTHER ROLE LANGUAGE STRINGS
 L["ttt2_cyclone_role_sus"] = "{victim} has been marked as 'suspicious'!"
+L["ttt2_cyc_role_marked_pers"] = " is suspicious now"
 
 -- F1 MENU: CONVAR EXPLANATIONS
 L["label_cyclone_strip_intel"] = "If it's set on 'true', the weapon that was used for flagging a person, is removed completely, when its clip size is above 1 bullet."
@@ -19,3 +20,5 @@ L["label_cyclone_max_hp_intel"] = "Set the maximum HP the suspicious person can 
 L["label_cyclone_max_hp"] = "Set the Max-HP for the suspicious person"
 L["label_cyclone_cur_hp_intel"] = "Set the current HP the suspicious person will receive when they get flagged."
 L["label_cyclone_cur_hp"] = "Set the current HP for the suspicious person"
+L["label_cyclone_epop_intel"] = "If it's set on 'true', a pop-up with the name of the flagged person is additionally displayed besides the HUD element."
+L["label_cyclone_epop_bool"] = "Print the Pop-up with information about the flagged player"

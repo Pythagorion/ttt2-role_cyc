@@ -11,6 +11,7 @@ L["ttt2_desc_" .. CYCLONE.name] = [[Der Zyklon gewinnt mit den Verrätern!]]
 
 -- OTHER ROLE LANGUAGE STRINGS
 L["ttt2_cyclone_role_sus"] = "{victim} wurde als 'verdächtig' markiert!"
+L["ttt2_cyc_role_marked_pers"] = " ist nun verdächtig"
 
 -- F1 MENU: CONVAR EXPLANATIONS
 L["label_cyclone_strip_intel"] = "Ist es aktiviert, wird die Waffe, die zum markieren verwendet wurde, komplett entfernt."
@@ -19,3 +20,5 @@ L["label_cyclone_max_hp_intel"] = "Setze die Max-HP, die die markierte Person di
 L["label_cyclone_max_hp"] = "Setzte die Max-HP für den Verdächtigen"
 L["label_cyclone_cur_hp_intel"] = "Setze die HP, die die markierte Person beim Markieren erhält."
 L["label_cyclone_cur_hp"] = "Setzte die aktuellen HP für den Verdächtigen"
+L["label_cyclone_epop_intel"] = "Ist es aktiviert, wird zusätzlich zu dem HUD-Element ein Pop-Up angezeigt, dass den Namen des verdächtigen Spielers enthält."
+L["label_cyclone_epop_bool"] = "Zeige Infos über den markierten Spieler mittels Pop-Up an"
