@@ -7,7 +7,7 @@ Flag a person as 'suspicious'. This person will be suspicious for everyone and c
 L["body_found_" .. HURRICANE.abbr] = "They were a Hurricane."
 L["search_role_" .. HURRICANE.abbr] = "This person was a Hurricane!"
 L["target_" .. HURRICANE.name] = "Hurricane"
-L["ttt2_desc_" .. HURRICANE.name] = [[The Hurricane needs to win with the traitors!]]
+L["ttt2_desc_" .. HURRICANE.name] = [[The Hurricane needs to win with the innocents!]]
 
 -- OTHER ROLE LANGUAGE STRINGS
 // Hurricane does not need any role-specific language strings. They use the Cyclone's ones.
