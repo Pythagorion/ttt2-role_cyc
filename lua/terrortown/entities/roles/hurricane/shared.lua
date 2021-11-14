@@ -40,6 +40,14 @@ end
 
 if SERVER then
 
+	function ROLE:GiveRoleLoadout(ply)
+		ply:GiveEquipmentWeapon("weapon_ttt_wtester")
+	end
+
+	function ROLE:RemoveRoleLoadout(ply)
+		ply:RemoveEquipmentWeapon("weapon_ttt_wtester")
+	end
+
 	-- using this function to reset all values for the coming round
     local function ResetHurricane()
 		local plys = player.GetAll()
